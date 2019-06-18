@@ -16,7 +16,7 @@ var (
 
 func init() {
 	config = conf.MustNewConfig()
-	err := config.Load("../config.json")
+	err := config.Load("../../config.json")
 	if err != nil {
 		panic(err)
 	}
