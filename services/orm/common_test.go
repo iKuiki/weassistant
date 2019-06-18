@@ -42,10 +42,12 @@ func testService(t *testing.T, createServFn interface{}, createModelFn interface
 	crtServFnValue := reflect.ValueOf(createServFn)
 	switch crtServFnValue.Kind() {
 	case reflect.Func:
+		// 如果是方法，则推定此方法为获取服务value的方法
 		db := config.GetMainDB()
 		callRes := crtServFnValue.Call([]reflect.Value{reflect.ValueOf(db)})
 		servValue = callRes[0].Elem()
 	case reflect.Ptr:
+		// 如果为指针，则认为这就是待测服务
 		servValue = crtServFnValue
 	default:
 		panic(fmt.Sprintf("unknown createServFn Kind %v", crtServFnValue.Kind()))
