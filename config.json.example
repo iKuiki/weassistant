@@ -1,1 +1,16 @@
-{}
+{
+    "MainDBConf": {
+        "Host": "127.0.0.1",
+        "Port": 3306,
+        "User": "root",
+        "Password": "",
+        "DBName": "db_test"
+    },
+    "MainRedisConf": {
+        "Host": "127.0.0.1",
+        "Port": 6379,
+        "Password": "",
+        "DBNo": 0,
+        "PoolSize": 0
+    }
+}
