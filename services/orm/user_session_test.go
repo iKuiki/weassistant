@@ -1,4 +1,4 @@
-package services
+package orm
 
 import (
 	"testing"
@@ -92,8 +92,8 @@ func TestUserSessionValid(t *testing.T) {
 	if !effective {
 		t.Fatalf("user session %s not effective after created", userSession.Token)
 	}
-	whereOptions := []OrmWhereOption{
-		OrmWhereOption{Query: "id = ?", Item: []interface{}{userSession.ID}},
+	whereOptions := []WhereOption{
+		WhereOption{Query: "id = ?", Item: []interface{}{userSession.ID}},
 	}
 	err = userSessionService.DeleteByWhereOptions(whereOptions)
 	if err != nil {

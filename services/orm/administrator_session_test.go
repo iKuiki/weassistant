@@ -1,4 +1,4 @@
-package services
+package orm
 
 import (
 	"testing"
@@ -92,8 +92,8 @@ func TestAdministratorSessionValid(t *testing.T) {
 	if !effective {
 		t.Fatalf("administrator session %s not effective after created", administratorSession.Token)
 	}
-	whereOptions := []OrmWhereOption{
-		OrmWhereOption{Query: "id = ?", Item: []interface{}{administratorSession.ID}},
+	whereOptions := []WhereOption{
+		WhereOption{Query: "id = ?", Item: []interface{}{administratorSession.ID}},
 	}
 	err = administratorSessionService.DeleteByWhereOptions(whereOptions)
 	if err != nil {

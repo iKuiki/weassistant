@@ -1,8 +1,9 @@
-package services
+package orm
 
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/pkg/errors"
 	"weassistant/conf/rediskey"
 	"weassistant/models"
 
@@ -13,12 +14,12 @@ import (
 type UserSessionService interface {
 	// 标准Mysql服务
 	Get(sessionID uint64) (session models.UserSession, err error)
-	GetByWhereOptions(whereOptions []OrmWhereOption) (session models.UserSession, err error)
-	GetListByWhereOptions(whereOptions []OrmWhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.UserSession, err error)
-	GetCountByWhereOptions(whereOptions []OrmWhereOption) (count uint64, err error)
+	GetByWhereOptions(whereOptions []WhereOption) (session models.UserSession, err error)
+	GetListByWhereOptions(whereOptions []WhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.UserSession, err error)
+	GetCountByWhereOptions(whereOptions []WhereOption) (count uint64, err error)
 	Save(session *models.UserSession) (err error)
 	Delete(session *models.UserSession) (err error)
-	DeleteByWhereOptions(where []OrmWhereOption) (err error)
+	DeleteByWhereOptions(where []WhereOption) (err error)
 	// Redis附加服务
 	ValidSessionToken(userID uint64, token string) (effective bool, err error)
 }
@@ -31,12 +32,25 @@ type userSessionService struct {
 
 // MustNewUserSessionService 新建用户会话存储服务
 func MustNewUserSessionService(db *gorm.DB, rds *redis.Client) UserSessionService {
-	db.AutoMigrate(models.UserSession{})
-	return &userSessionService{
+	serv, err := NewUserSessionService(db, rds)
+	if err != nil {
+		panic(errors.WithStack(err))
+	}
+	return serv
+}
+
+// NewUserSessionService 新建用户会话存储服务
+func NewUserSessionService(db *gorm.DB, rds *redis.Client) (serv UserSessionService, err error) {
+	err = errors.WithStack(db.AutoMigrate(models.UserSession{}).Error)
+	if err != nil {
+		return
+	}
+	serv = &userSessionService{
 		db:            db,
 		commonService: mustNewCommonService(db),
 		rds:           rds,
 	}
+	return
 }
 
 // Get 通过ID获取用户会话
@@ -46,19 +60,19 @@ func (serv *userSessionService) Get(sessionID uint64) (session models.UserSessio
 }
 
 // GetByWhereOptions 通过查询条件获取用户会话
-func (serv *userSessionService) GetByWhereOptions(whereOptions []OrmWhereOption) (session models.UserSession, err error) {
+func (serv *userSessionService) GetByWhereOptions(whereOptions []WhereOption) (session models.UserSession, err error) {
 	err = serv.commonService.GetObjectByWhereOptions(&session, whereOptions)
 	return
 }
 
 // GetListByWhereOptions 通过查询条件获取用户会话列表
-func (serv *userSessionService) GetListByWhereOptions(whereOptions []OrmWhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.UserSession, err error) {
+func (serv *userSessionService) GetListByWhereOptions(whereOptions []WhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.UserSession, err error) {
 	err = serv.commonService.GetObjectListByWhereOptions(&sessions, whereOptions, order, limit, offset, preloads...)
 	return
 }
 
 // GetCountByWhereOptions 通过查询条件获取用户会话数量
-func (serv *userSessionService) GetCountByWhereOptions(whereOptions []OrmWhereOption) (count uint64, err error) {
+func (serv *userSessionService) GetCountByWhereOptions(whereOptions []WhereOption) (count uint64, err error) {
 	return serv.commonService.GetCountByWhereOptions(models.UserSession{}, whereOptions)
 }
 
@@ -91,7 +105,7 @@ func (serv *userSessionService) Delete(session *models.UserSession) (err error) 
 }
 
 // DeleteByWhereOptions 根据查询条件删除用户会话
-func (serv *userSessionService) DeleteByWhereOptions(where []OrmWhereOption) (err error) {
+func (serv *userSessionService) DeleteByWhereOptions(where []WhereOption) (err error) {
 	sessions, err := serv.GetListByWhereOptions(where, []string{}, 0, 0)
 	if err != nil {
 		return

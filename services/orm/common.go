@@ -1,11 +1,11 @@
-package services
+package orm
 
 import (
 	"github.com/jinzhu/gorm"
 )
 
-// OrmWhereOption 传入where查询时使用的结构体
-type OrmWhereOption struct {
+// WhereOption 传入where查询时使用的结构体
+type WhereOption struct {
 	Query string
 	Item  []interface{}
 }
@@ -30,7 +30,7 @@ func (serv *commonService) Get(object interface{}, id uint64) (err error) {
 }
 
 // GetObjectByWhereOptions 通过指定条件获取对象
-func (serv *commonService) GetObjectByWhereOptions(object interface{}, where []OrmWhereOption, preloads ...string) (err error) {
+func (serv *commonService) GetObjectByWhereOptions(object interface{}, where []WhereOption, preloads ...string) (err error) {
 	o := serv.db
 	for _, w := range where {
 		o = o.Where(w.Query, w.Item...)
@@ -43,7 +43,7 @@ func (serv *commonService) GetObjectByWhereOptions(object interface{}, where []O
 }
 
 // GetObjectListByWhereOptions 通过指定条件获取列表
-func (serv *commonService) GetObjectListByWhereOptions(objects interface{}, where []OrmWhereOption, orders []string, limit, offset int64, preloads ...string) (err error) {
+func (serv *commonService) GetObjectListByWhereOptions(objects interface{}, where []WhereOption, orders []string, limit, offset int64, preloads ...string) (err error) {
 	o := serv.db
 	for _, w := range where {
 		o = o.Where(w.Query, w.Item...)
@@ -70,7 +70,7 @@ func (serv *commonService) GetObjectListByWhereOptions(objects interface{}, wher
 }
 
 // GetCountByWhereOptions 通过指定条件获取计数
-func (serv *commonService) GetCountByWhereOptions(model interface{}, where []OrmWhereOption) (count uint64, err error) {
+func (serv *commonService) GetCountByWhereOptions(model interface{}, where []WhereOption) (count uint64, err error) {
 	o := serv.db.Model(model)
 	for _, w := range where {
 		o = o.Where(w.Query, w.Item...)
@@ -92,7 +92,7 @@ func (serv *commonService) Save(object interface{}) (err error) {
 }
 
 // UpdateObjectsViaMap 通过map更新对象
-func (serv *commonService) UpdateObjectsViaMap(model interface{}, where []OrmWhereOption, updateMap map[string]interface{}) (err error) {
+func (serv *commonService) UpdateObjectsViaMap(model interface{}, where []WhereOption, updateMap map[string]interface{}) (err error) {
 	o := serv.db.Model(model)
 	for _, w := range where {
 		o = o.Where(w.Query, w.Item...)
@@ -109,7 +109,7 @@ func (serv *commonService) Delete(object interface{}) (err error) {
 }
 
 // DeleteByWhereOptions 根据条件删除对象
-func (serv *commonService) DeleteByWhereOptions(model interface{}, where []OrmWhereOption) (err error) {
+func (serv *commonService) DeleteByWhereOptions(model interface{}, where []WhereOption) (err error) {
 	o := serv.db
 	for _, w := range where {
 		o = o.Where(w.Query, w.Item...)

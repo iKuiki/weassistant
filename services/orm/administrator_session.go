@@ -1,8 +1,9 @@
-package services
+package orm
 
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/pkg/errors"
 	"weassistant/conf/rediskey"
 	"weassistant/models"
 
@@ -13,12 +14,12 @@ import (
 type AdministratorSessionService interface {
 	// 标准Mysql服务
 	Get(sessionID uint64) (session models.AdministratorSession, err error)
-	GetByWhereOptions(whereOptions []OrmWhereOption) (session models.AdministratorSession, err error)
-	GetListByWhereOptions(whereOptions []OrmWhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.AdministratorSession, err error)
-	GetCountByWhereOptions(whereOptions []OrmWhereOption) (count uint64, err error)
+	GetByWhereOptions(whereOptions []WhereOption) (session models.AdministratorSession, err error)
+	GetListByWhereOptions(whereOptions []WhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.AdministratorSession, err error)
+	GetCountByWhereOptions(whereOptions []WhereOption) (count uint64, err error)
 	Save(session *models.AdministratorSession) (err error)
 	Delete(session *models.AdministratorSession) (err error)
-	DeleteByWhereOptions(where []OrmWhereOption) (err error)
+	DeleteByWhereOptions(where []WhereOption) (err error)
 	// Redis附加服务
 	ValidSessionToken(administratorID uint64, token string) (effective bool, err error)
 }
@@ -29,14 +30,27 @@ type administratorSessionService struct {
 	rds           *redis.Client
 }
 
-// MustNewAdministratorSessionService 新建管理员会话存储服务
+// MustNewAdministratorSessionService 无比新建管理员会话存储服务
 func MustNewAdministratorSessionService(db *gorm.DB, rds *redis.Client) AdministratorSessionService {
-	db.AutoMigrate(models.AdministratorSession{})
-	return &administratorSessionService{
+	serv, err := NewAdministratorSessionService(db, rds)
+	if err != nil {
+		panic(errors.WithStack(err))
+	}
+	return serv
+}
+
+// NewAdministratorSessionService 新建管理员会话存储服务
+func NewAdministratorSessionService(db *gorm.DB, rds *redis.Client) (serv AdministratorSessionService, err error) {
+	err = errors.WithStack(db.AutoMigrate(models.AdministratorSession{}).Error)
+	if err != nil {
+		return
+	}
+	serv = &administratorSessionService{
 		db:            db,
 		commonService: mustNewCommonService(db),
 		rds:           rds,
 	}
+	return
 }
 
 // Get 通过ID获取管理员会话
@@ -46,19 +60,19 @@ func (serv *administratorSessionService) Get(sessionID uint64) (session models.A
 }
 
 // GetByWhereOptions 通过查询条件获取管理员会话
-func (serv *administratorSessionService) GetByWhereOptions(whereOptions []OrmWhereOption) (session models.AdministratorSession, err error) {
+func (serv *administratorSessionService) GetByWhereOptions(whereOptions []WhereOption) (session models.AdministratorSession, err error) {
 	err = serv.commonService.GetObjectByWhereOptions(&session, whereOptions)
 	return
 }
 
 // GetListByWhereOptions 通过查询条件获取管理员会话列表
-func (serv *administratorSessionService) GetListByWhereOptions(whereOptions []OrmWhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.AdministratorSession, err error) {
+func (serv *administratorSessionService) GetListByWhereOptions(whereOptions []WhereOption, order []string, limit, offset int64, preloads ...string) (sessions []models.AdministratorSession, err error) {
 	err = serv.commonService.GetObjectListByWhereOptions(&sessions, whereOptions, order, limit, offset, preloads...)
 	return
 }
 
 // GetCountByWhereOptions 通过查询条件获取管理员会话数量
-func (serv *administratorSessionService) GetCountByWhereOptions(whereOptions []OrmWhereOption) (count uint64, err error) {
+func (serv *administratorSessionService) GetCountByWhereOptions(whereOptions []WhereOption) (count uint64, err error) {
 	return serv.commonService.GetCountByWhereOptions(models.AdministratorSession{}, whereOptions)
 }
 
@@ -91,7 +105,7 @@ func (serv *administratorSessionService) Delete(session *models.AdministratorSes
 }
 
 // DeleteByWhereOptions 根据查询条件删除管理员会话
-func (serv *administratorSessionService) DeleteByWhereOptions(where []OrmWhereOption) (err error) {
+func (serv *administratorSessionService) DeleteByWhereOptions(where []WhereOption) (err error) {
 	sessions, err := serv.GetListByWhereOptions(where, []string{}, 0, 0)
 	if err != nil {
 		return
