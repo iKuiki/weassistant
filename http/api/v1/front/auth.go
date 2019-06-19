@@ -50,7 +50,7 @@ func (api *AuthAPI) PostRegister(ctx iris.Context,
 	if err != nil {
 		return api.Error(ctx, common.RetCodeGormQueryFail, ctx.Translate("CreateUserFail"), err, "userService.Save error: "+err.Error())
 	}
-	return api.Success("注册成功", user)
+	return api.Success(ctx.Translate("RegisterSuccess"), user)
 }
 
 // PostLogin 登陆

@@ -46,7 +46,7 @@ func (api *AuthAPI) NoneRegister(ctx iris.Context,
 	if err != nil {
 		return api.Error(ctx, common.RetCodeGormQueryFail, ctx.Translate("CreateAdministratorFail"), err, "administratorService.Save error: "+err.Error())
 	}
-	return api.Success("注册成功", administrator)
+	return api.Success(ctx.Translate("RegisterSuccess"), administrator)
 }
 
 // PostLogin 登陆

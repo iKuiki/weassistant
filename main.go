@@ -17,6 +17,7 @@ func main() {
 		panic(err)
 	}
 	extraConf := conf.MustExtraNewConfig(config)
+	// 创建iris app
 	app := iris.New()
 	if config.GetDebug() {
 		app.Logger().SetLevel("debug")
@@ -32,10 +33,10 @@ func main() {
 		Default:      "en",
 		URLParameter: "lang",
 		Languages: map[string]string{
-			"en":    "locales/en-US.ini",
-			"en-US": "locales/en-US.ini",
-			"zh":    "locales/zh-CN.ini",
-			"zh-CN": "locales/zh-CN.ini",
+			"en":    "http/locales/en-US.ini",
+			"en-US": "http/locales/en-US.ini",
+			"zh":    "http/locales/zh-CN.ini",
+			"zh-CN": "http/locales/zh-CN.ini",
 		},
 	}))
 	api1Router.RegisterAPI1Router(app, extraConf)
