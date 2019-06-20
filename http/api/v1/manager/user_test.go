@@ -1,16 +1,17 @@
 package manager_test
 
+
 import (
 	"github.com/kataras/iris/httptest"
 	"github.com/tidwall/gjson"
 	"testing"
 )
 
-func TestLogin(t *testing.T) {
+func TestUserManager(t *testing.T) {
 	e := httptest.New(t, testApp)
 	{
 		// 未登录时期望获取到needlogin
-		e.GET("/api/v1/manager/my").
+		e.GET("/api/v1/manager/user").
 			Expect().Status(httptest.StatusUnauthorized).
 			Body().Contains(`"code": 2`).
 			Contains(`"msg": "need login"`)
@@ -31,10 +32,9 @@ func TestLogin(t *testing.T) {
 		jwtToken = gjson.Get(body, "data").String()
 	}
 	{
-		// 尝试获取信息
-		e.GET("/api/v1/manager/my").WithHeader("Authorization", "bearermgr "+jwtToken).
+		// 尝试用户列表
+		e.GET("/api/v1/manager/user").WithHeader("Authorization", "bearermgr "+jwtToken).
 			Expect().Status(httptest.StatusOK).
-			Body().Contains(`"code": 0`).
-			Contains(`"hello testLogin"`)
+			Body().Contains(`"code": 0`)
 	}
 }

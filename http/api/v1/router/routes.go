@@ -7,8 +7,11 @@ import (
 
 // RegisterAPI1Router 注册api路由
 func RegisterAPI1Router(app *iris.Application, extraConf conf.ExtraConfig) {
+	// v1版api
+	APIv1 := app.Party("/api/v1")
 	// Front
-	registerFrontUserRoutes(app, extraConf)
+	registerFrontRoutes(APIv1, extraConf)
 	// Manager
-	registerManagerAdministratorRoutes(app, extraConf)
+	managerAPI := app.Party("/api/v1/manager")
+	registerManagerRoutes(managerAPI, extraConf)
 }

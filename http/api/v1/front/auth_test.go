@@ -67,6 +67,13 @@ func TestRegister(t *testing.T) {
 
 func TestRegisterAndLogin(t *testing.T) {
 	e := httptest.New(t, testApp)
+	{
+		// 尝试获取信息
+		e.GET("/api/v1/user").
+			Expect().Status(httptest.StatusUnauthorized).
+			Body().Contains(`"code": 2`).
+			Contains(`"msg": "need login"`)
+	}
 	account := "testR&L_" + RandStringBytes(10)
 	password := "123321"
 	{
