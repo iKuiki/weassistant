@@ -93,9 +93,7 @@ func TestRegisterAndLogin(t *testing.T) {
 	{
 		// 尝试获取信息
 		e.GET("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
-			WithFormField("nickname", "testRegisterAndLogin").
-			WithFormField("account", account).
-			WithFormField("password", password).Expect().Status(httptest.StatusOK).
+			Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
 			Contains(`"hello testRegisterAndLogin"`)
 	}

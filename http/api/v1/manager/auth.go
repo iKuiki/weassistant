@@ -23,6 +23,7 @@ type AuthAPI struct {
 
 // NoneRegister 注册
 // 不开放注册
+// 如有更新，请一同更新common_test文件下的getTestAdministrator测试方法
 func (api *AuthAPI) NoneRegister(ctx iris.Context,
 	administratorService orm.AdministratorService) mvc.Result {
 	var formAdministrator, administrator models.Administrator
