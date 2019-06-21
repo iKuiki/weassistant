@@ -46,7 +46,7 @@ func registerManagerMyRoutes(managerAPI router.Party, managerConf managerModuleC
 	mvc.New(managerAPI.Party("/my")).
 		Register(managerConf.GetMgrJwtMiddleware()).
 		Register(managerConf.GetAdministratorService()).
-		Handle(new(manager.AdministratorAPI))
+		Handle(new(manager.MyAPI))
 }
 
 // 用户管理模块路由

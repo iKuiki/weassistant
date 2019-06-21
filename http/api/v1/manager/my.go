@@ -7,13 +7,13 @@ import (
 	"github.com/kataras/iris/mvc"
 )
 
-// AdministratorAPI 用户控制器
-type AdministratorAPI struct {
+// MyAPI 用户控制器
+type MyAPI struct {
 	BaseAPI
 }
 
 // Get 获取用户信息
-func (api *AdministratorAPI) Get(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware) mvc.Result {
+func (api *MyAPI) Get(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware) mvc.Result {
 	administratorToken := jwtHandler.Get(ctx)
 	var name string
 	if claims, ok := administratorToken.Claims.(jwt.MapClaims); ok && administratorToken.Valid {
