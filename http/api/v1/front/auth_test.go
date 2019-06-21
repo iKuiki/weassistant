@@ -94,8 +94,8 @@ func TestRegisterAndLogin(t *testing.T) {
 			WithFormField("account", account).
 			WithFormField("password", password).Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
-			Contains(`"login successful"`).Raw()
-		jwtToken = gjson.Get(body, "data").String()
+			Contains(`"login successful"`).Contains(`"token": "`).Contains(`"user": `).Raw()
+		jwtToken = gjson.Get(body, "data.token").String()
 	}
 	{
 		// 尝试获取信息

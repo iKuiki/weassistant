@@ -102,5 +102,8 @@ func (api *AuthAPI) PostLogin(ctx iris.Context, jwtHandler *jwtmiddleware.Middle
 		return api.Error(ctx, common.RetCodeJwtSignedFail, ctx.Translate("JwtSignedFail"), err, "token.SignedString error: "+err.Error())
 	}
 	ctx.Application().Logger().Debugf("user %s[%d] login success", user.Account, user.ID)
-	return api.Success(ctx.Translate("LoginSuccess"), tokenString)
+	return api.Success(ctx.Translate("LoginSuccess"), iris.Map{
+		"token": tokenString,
+		"user":  user,
+	})
 }

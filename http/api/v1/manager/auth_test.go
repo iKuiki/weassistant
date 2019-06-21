@@ -27,8 +27,8 @@ func TestLogin(t *testing.T) {
 			WithFormField("account", admin.Account).
 			WithFormField("password", admin.Password).Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
-			Contains(`"login successful"`).Raw()
-		jwtToken = gjson.Get(body, "data").String()
+			Contains(`"login successful"`).Contains(`"token": "`).Contains(`"administrator": `).Raw()
+		jwtToken = gjson.Get(body, "data.token").String()
 	}
 	{
 		// 尝试获取信息
