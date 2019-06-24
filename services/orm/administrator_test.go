@@ -1,10 +1,11 @@
-package orm
+package orm_test
 
 import (
 	"github.com/google/uuid"
 	"testing"
 	"time"
 	"weassistant/models"
+	"weassistant/services/orm"
 )
 
 func createTestAdministrator() *models.Administrator {
@@ -18,5 +19,5 @@ func createTestAdministrator() *models.Administrator {
 }
 
 func TestAdministrator(t *testing.T) {
-	testService(t, MustNewAdministratorService, createTestAdministrator)
+	testService(t, orm.MustNewAdministratorService, createTestAdministrator)
 }

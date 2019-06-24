@@ -1,8 +1,9 @@
-package orm
+package orm_test
 
 import (
 	"testing"
 	"weassistant/models"
+	"weassistant/services/orm"
 
 	"github.com/google/uuid"
 )
@@ -16,13 +17,13 @@ func createTestUserSession() *models.UserSession {
 }
 
 func TestUserSession(t *testing.T) {
-	userSessionService := MustNewUserSessionService(config.GetMainDB(), config.GetMainRedis())
+	userSessionService := orm.MustNewUserSessionService(config.GetMainDB(), config.GetMainRedis())
 	testService(t, userSessionService, createTestUserSession)
 }
 
 // TestUserSessionValid 测试session在增删改查中是否如预期的可验证、不可被验证
 func TestUserSessionValid(t *testing.T) {
-	userSessionService := MustNewUserSessionService(config.GetMainDB(), config.GetMainRedis())
+	userSessionService := orm.MustNewUserSessionService(config.GetMainDB(), config.GetMainRedis())
 	// 测试路径：Create->Save(!Effective)
 	userSession := createTestUserSession()
 	effective, err := userSessionService.ValidSessionToken(userSession.UserID, userSession.Token)
@@ -92,8 +93,8 @@ func TestUserSessionValid(t *testing.T) {
 	if !effective {
 		t.Fatalf("user session %s not effective after created", userSession.Token)
 	}
-	whereOptions := []WhereOption{
-		WhereOption{Query: "id = ?", Item: []interface{}{userSession.ID}},
+	whereOptions := []orm.WhereOption{
+		orm.WhereOption{Query: "id = ?", Item: []interface{}{userSession.ID}},
 	}
 	err = userSessionService.DeleteByWhereOptions(whereOptions)
 	if err != nil {

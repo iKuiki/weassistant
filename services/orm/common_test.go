@@ -1,8 +1,9 @@
-package orm
+package orm_test
 
 import (
 	"reflect"
 	"weassistant/conf"
+	"weassistant/services/orm"
 
 	"fmt"
 	"testing"
@@ -109,7 +110,7 @@ func testService(t *testing.T, createServFn interface{}, createModelFn interface
 	assertKind(servDeleteByWhereOptionsFnValue, reflect.Func)
 	// WhereOption测试
 	{
-		fnRetValues = servGetCountByWhereOptionsFnValue.Call([]reflect.Value{reflect.ValueOf([]WhereOption{})})
+		fnRetValues = servGetCountByWhereOptionsFnValue.Call([]reflect.Value{reflect.ValueOf([]orm.WhereOption{})})
 		errValue := fnRetValues[1]
 		if !errValue.IsNil() { // 判断Error
 			t.Fatal(errValue.Interface().(error))
@@ -132,8 +133,8 @@ func testService(t *testing.T, createServFn interface{}, createModelFn interface
 			dataPtrValues = append(dataPtrValues, dataPtrValue)
 			dataIDs = append(dataIDs, dataPtrValue.Elem().FieldByName("ID").Uint())
 		}
-		whereOptions := []WhereOption{
-			WhereOption{Query: "id in (?)", Item: []interface{}{dataIDs}},
+		whereOptions := []orm.WhereOption{
+			orm.WhereOption{Query: "id in (?)", Item: []interface{}{dataIDs}},
 		}
 		// 测试获取全部
 		fnRetValues = servGetListByWhereOptionsFnValue.Call([]reflect.Value{
@@ -156,8 +157,8 @@ func testService(t *testing.T, createServFn interface{}, createModelFn interface
 				t.Fatalf("db data diff\n%+v\n%+v", dataPtrValue.Elem().Interface(), dbDataValue.Interface())
 			}
 			// 尝试单个读取检验是否正确
-			whereOptions := []WhereOption{
-				WhereOption{Query: "id = ?", Item: []interface{}{dataPtrValue.Elem().FieldByName("ID").Uint()}},
+			whereOptions := []orm.WhereOption{
+				orm.WhereOption{Query: "id = ?", Item: []interface{}{dataPtrValue.Elem().FieldByName("ID").Uint()}},
 			}
 			fnRetValues = servGetByWhereOptionsFnValue.Call([]reflect.Value{
 				reflect.ValueOf(whereOptions),
@@ -192,8 +193,8 @@ func testService(t *testing.T, createServFn interface{}, createModelFn interface
 				t.Fatalf("db data diff\n%+v\n%+v", dataPtrValue.Elem().Interface(), dbDataValue.Interface())
 			}
 			// 尝试单个读取检验是否正确
-			whereOptions := []WhereOption{
-				WhereOption{Query: "id = ?", Item: []interface{}{dataPtrValue.Elem().FieldByName("ID").Uint()}},
+			whereOptions := []orm.WhereOption{
+				orm.WhereOption{Query: "id = ?", Item: []interface{}{dataPtrValue.Elem().FieldByName("ID").Uint()}},
 			}
 			fnRetValues = servGetByWhereOptionsFnValue.Call([]reflect.Value{
 				reflect.ValueOf(whereOptions),
@@ -216,7 +217,7 @@ func testService(t *testing.T, createServFn interface{}, createModelFn interface
 		}
 		// 检查是否删干净了
 		fnRetValues = servGetListByWhereOptionsFnValue.Call([]reflect.Value{
-			reflect.ValueOf([]WhereOption{}),
+			reflect.ValueOf([]orm.WhereOption{}),
 			reflect.ValueOf([]string{}),
 			reflect.ValueOf(int64(0)),
 			reflect.ValueOf(int64(0)),

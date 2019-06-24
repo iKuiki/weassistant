@@ -1,8 +1,9 @@
-package orm
+package orm_test
 
 import (
 	"testing"
 	"weassistant/models"
+	"weassistant/services/orm"
 
 	"github.com/google/uuid"
 )
@@ -16,13 +17,13 @@ func createTestAdministratorSession() *models.AdministratorSession {
 }
 
 func TestAdministratorSession(t *testing.T) {
-	administratorSessionService := MustNewAdministratorSessionService(config.GetMainDB(), config.GetMainRedis())
+	administratorSessionService := orm.MustNewAdministratorSessionService(config.GetMainDB(), config.GetMainRedis())
 	testService(t, administratorSessionService, createTestAdministratorSession)
 }
 
 // TestAdministratorSessionValid 测试session在增删改查中是否如预期的可验证、不可被验证
 func TestAdministratorSessionValid(t *testing.T) {
-	administratorSessionService := MustNewAdministratorSessionService(config.GetMainDB(), config.GetMainRedis())
+	administratorSessionService := orm.MustNewAdministratorSessionService(config.GetMainDB(), config.GetMainRedis())
 	// 测试路径：Create->Save(!Effective)
 	administratorSession := createTestAdministratorSession()
 	effective, err := administratorSessionService.ValidSessionToken(administratorSession.AdministratorID, administratorSession.Token)
@@ -92,8 +93,8 @@ func TestAdministratorSessionValid(t *testing.T) {
 	if !effective {
 		t.Fatalf("administrator session %s not effective after created", administratorSession.Token)
 	}
-	whereOptions := []WhereOption{
-		WhereOption{Query: "id = ?", Item: []interface{}{administratorSession.ID}},
+	whereOptions := []orm.WhereOption{
+		orm.WhereOption{Query: "id = ?", Item: []interface{}{administratorSession.ID}},
 	}
 	err = administratorSessionService.DeleteByWhereOptions(whereOptions)
 	if err != nil {
