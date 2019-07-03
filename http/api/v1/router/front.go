@@ -46,5 +46,6 @@ func registerFrontUserRoutes(apiParty router.Party, frontConf frontConfig) {
 	mvc.New(apiParty.Party("/user")).
 		Register(frontConf.GetAPIJwtMiddleware()).
 		Register(frontConf.GetUserService()).
+		Register(frontConf.GetUserSessionService()).
 		Handle(new(front.UserAPI))
 }

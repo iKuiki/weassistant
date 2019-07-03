@@ -46,6 +46,7 @@ func registerManagerMyRoutes(managerAPI router.Party, managerConf managerModuleC
 	mvc.New(managerAPI.Party("/my")).
 		Register(managerConf.GetMgrJwtMiddleware()).
 		Register(managerConf.GetAdministratorService()).
+		Register(managerConf.GetAdministratorSessionService()).
 		Handle(new(manager.MyAPI))
 }
 

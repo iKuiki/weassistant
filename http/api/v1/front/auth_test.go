@@ -102,6 +102,16 @@ func TestRegisterAndLogin(t *testing.T) {
 		e.GET("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
-			Contains(`"hello testRegisterAndLogin"`)
+			Contains(`"nickname": "testRegisterAndLogin"`)
+	}
+	{
+		// 注销
+		e.DELETE("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
+			Expect().Status(httptest.StatusOK)
+	}
+	{
+		// 注销后应该返回未登录
+		e.GET("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
+			Expect().Status(httptest.StatusUnauthorized)
 	}
 }
