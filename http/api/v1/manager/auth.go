@@ -89,9 +89,10 @@ func (api *AuthAPI) PostLogin(ctx iris.Context, jwtHandler *jwtmiddleware.Middle
 		return api.Error(ctx, common.RetCodeGormQueryFail, ctx.Translate("SaveSessionFail"), err, "sessionService.Save error :"+err.Error())
 	}
 	token := jwt.NewWithClaims(jwtHandler.Config.SigningMethod, jwt.MapClaims{
-		"administrator_id":    session.AdministratorID,
-		"administrator_name":  administrator.Name,
-		"administrator_token": session.Token,
+		"administrator_id":      session.AdministratorID,
+		"administrator_account": administrator.Account,
+		"administrator_name":    administrator.Name,
+		"administrator_token":   session.Token,
 	})
 	tokenString, err := token.SignedString([]byte(jwtValidationKey))
 	if err != nil {

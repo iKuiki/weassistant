@@ -68,6 +68,8 @@ func (mid *needLoginMiddleware) UserID(ctx iris.Context) (userID uint64, err err
 			userID = uid
 			ctx.Values().SetImmutable("user_id", userID)
 			ctx.Values().SetImmutable("user_token", token)
+			ctx.Values().SetImmutable("user_account", claims["user_account"].(string))
+			ctx.Values().SetImmutable("user_nickname", claims["user_nickname"].(string))
 		}
 	} else {
 		userID = inf.(uint64)

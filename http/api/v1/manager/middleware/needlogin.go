@@ -67,6 +67,8 @@ func (mid *needLoginMiddleware) AdministratorID(ctx iris.Context) (administrator
 			administratorID = adminID
 			ctx.Values().SetImmutable("administrator_id", administratorID)
 			ctx.Values().SetImmutable("administrator_token", token)
+			ctx.Values().SetImmutable("administrator_account", claims["administrator_account"].(string))
+			ctx.Values().SetImmutable("administrator_name", claims["administrator_name"].(string))
 		}
 	} else {
 		administratorID = inf.(uint64)

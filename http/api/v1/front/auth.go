@@ -94,6 +94,7 @@ func (api *AuthAPI) PostLogin(ctx iris.Context, jwtHandler *jwtmiddleware.Middle
 	}
 	token := jwt.NewWithClaims(jwtHandler.Config.SigningMethod, jwt.MapClaims{
 		"user_id":       session.UserID,
+		"user_account":  user.Account,
 		"user_nickname": user.Nickname,
 		"user_token":    session.Token,
 	})
