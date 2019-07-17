@@ -33,7 +33,7 @@ func registerFrontRoutes(apiParty router.Party, frontConf frontConfig, handles .
 
 // 登陆认证相关
 func registerFrontAuthRoutes(apiParty router.Party, frontConf frontConfig, handles ...context.Handler) {
-	mvc.New(apiParty.Party("/user", handles...)).
+	mvc.New(apiParty.Party("/auth", handles...)).
 		Register(frontConf.GetAPIJwtMiddleware()).
 		Register(frontConf.GetRegisterLockerService()).
 		Register(frontConf.GetUserService()).
@@ -44,7 +44,7 @@ func registerFrontAuthRoutes(apiParty router.Party, frontConf frontConfig, handl
 
 // registerFrontUserRoutes 注册前台用户服务路由
 func registerFrontUserRoutes(apiParty router.Party, frontConf frontConfig, handles ...context.Handler) {
-	mvc.New(apiParty.Party("/user", handles...)).
+	mvc.New(apiParty.Party("/me", handles...)).
 		Register(frontConf.GetAPIJwtMiddleware()).
 		Register(frontConf.GetUserService()).
 		Register(frontConf.GetUserSessionService()).

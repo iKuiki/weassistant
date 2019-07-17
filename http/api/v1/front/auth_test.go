@@ -10,7 +10,7 @@ func TestRegister(t *testing.T) {
 	e := httptest.New(t, testApp)
 	{
 		// 验证提交为空的情况
-		e.POST("/api/v1/user/register").Expect().Status(httptest.StatusOK).
+		e.POST("/api/v1/auth/register").Expect().Status(httptest.StatusOK).
 			Body().
 			Contains(`"code": 11`).
 			Contains(`"Account is a required field"`).
@@ -19,11 +19,11 @@ func TestRegister(t *testing.T) {
 	}
 	{
 		// 测试重复用户名
-		e.POST("/api/v1/user/register").
+		e.POST("/api/v1/auth/register").
 			WithFormField("nickname", "testName").
 			WithFormField("account", "testExistAccount").
 			WithFormField("password", "123321").Expect().Status(httptest.StatusOK)
-		e.POST("/api/v1/user/register").
+		e.POST("/api/v1/auth/register").
 			WithFormField("nickname", "testName").
 			WithFormField("account", "testExistAccount").
 			WithFormField("password", "123321").Expect().Status(httptest.StatusOK).
@@ -32,7 +32,7 @@ func TestRegister(t *testing.T) {
 	}
 	{
 		// 验证提交的昵称、用户名、密码长度不足
-		e.POST("/api/v1/user/register").
+		e.POST("/api/v1/auth/register").
 			WithFormField("nickname", "t").
 			WithFormField("account", "ttt").
 			WithFormField("password", "ttttt").Expect().Status(httptest.StatusOK).
@@ -43,7 +43,7 @@ func TestRegister(t *testing.T) {
 	}
 	{
 		// 验证提交的昵称、用户名、密码长度过长
-		e.POST("/api/v1/user/register").
+		e.POST("/api/v1/auth/register").
 			WithFormField("nickname", "ttttttttttttttttttttt").
 			WithFormField("account", "ttttttttttttttttttttt").
 			WithFormField("password", "ttttttttttttttttttttttttttttttttttttttttt").Expect().Status(httptest.StatusOK).
@@ -54,7 +54,7 @@ func TestRegister(t *testing.T) {
 	}
 	{
 		// 验证正常提交时可以注册
-		e.POST("/api/v1/user/register").
+		e.POST("/api/v1/auth/register").
 			WithFormField("nickname", "testRegister").
 			WithFormField("account", "testReg_"+RandStringBytes(10)).
 			WithFormField("password", "123321").Expect().Status(httptest.StatusOK).
@@ -69,7 +69,7 @@ func TestRegisterAndLogin(t *testing.T) {
 	e := httptest.New(t, testApp)
 	{
 		// 尝试获取信息
-		e.GET("/api/v1/user").
+		e.GET("/api/v1/me").
 			Expect().Status(httptest.StatusUnauthorized).
 			Body().Contains(`"code": 2`).
 			Contains(`"msg": "need login"`)
@@ -78,7 +78,7 @@ func TestRegisterAndLogin(t *testing.T) {
 	password := "123321"
 	{
 		// 先注册
-		e.POST("/api/v1/user/register").
+		e.POST("/api/v1/auth/register").
 			WithFormField("nickname", "testRegisterAndLogin").
 			WithFormField("account", account).
 			WithFormField("password", password).Expect().Status(httptest.StatusOK).
@@ -90,7 +90,7 @@ func TestRegisterAndLogin(t *testing.T) {
 	var jwtToken string
 	{
 		// 尝试登陆
-		body := e.POST("/api/v1/user/login").
+		body := e.POST("/api/v1/auth/login").
 			WithFormField("account", account).
 			WithFormField("password", password).Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
@@ -99,19 +99,19 @@ func TestRegisterAndLogin(t *testing.T) {
 	}
 	{
 		// 尝试获取信息
-		e.GET("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
+		e.GET("/api/v1/me").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
 			Contains(`"nickname": "testRegisterAndLogin"`)
 	}
 	{
 		// 注销
-		e.DELETE("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
+		e.DELETE("/api/v1/me").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusOK)
 	}
 	{
 		// 注销后应该返回未登录
-		e.GET("/api/v1/user").WithHeader("Authorization", "Bearer "+jwtToken).
+		e.GET("/api/v1/me").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusUnauthorized)
 	}
 }
