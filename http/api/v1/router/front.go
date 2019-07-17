@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/iris-contrib/middleware/jwt"
+	"github.com/kataras/iris/context"
 	"github.com/kataras/iris/core/router"
 	"weassistant/http/api/v1/front"
 	api1FrontMiddleware "weassistant/http/api/v1/front/middleware"
@@ -20,19 +21,19 @@ type frontConfig interface {
 }
 
 // registerFrontRoutes 前台服务路由总成
-func registerFrontRoutes(apiParty router.Party, frontConf frontConfig) {
+func registerFrontRoutes(apiParty router.Party, frontConf frontConfig, handles ...context.Handler) {
 	// 先是不需要login的Auth相关接口
-	registerFrontAuthRoutes(apiParty, frontConf)
+	registerFrontAuthRoutes(apiParty, frontConf, handles...)
 	// 创建登录验证中间件
 	needLoginMiddleware := api1FrontMiddleware.MustNewNeedLoginMiddleware(frontConf.GetAPIJwtMiddleware(), frontConf.GetUserSessionService())
 	// 之后的用户信息相关的接口需要登录后才能调用
 	apiParty.Use(needLoginMiddleware.Serve)
-	registerFrontUserRoutes(apiParty, frontConf)
+	registerFrontUserRoutes(apiParty, frontConf, handles...)
 }
 
 // 登陆认证相关
-func registerFrontAuthRoutes(apiParty router.Party, frontConf frontConfig) {
-	mvc.New(apiParty.Party("/user")).
+func registerFrontAuthRoutes(apiParty router.Party, frontConf frontConfig, handles ...context.Handler) {
+	mvc.New(apiParty.Party("/user", handles...)).
 		Register(frontConf.GetAPIJwtMiddleware()).
 		Register(frontConf.GetRegisterLockerService()).
 		Register(frontConf.GetUserService()).
@@ -42,8 +43,8 @@ func registerFrontAuthRoutes(apiParty router.Party, frontConf frontConfig) {
 }
 
 // registerFrontUserRoutes 注册前台用户服务路由
-func registerFrontUserRoutes(apiParty router.Party, frontConf frontConfig) {
-	mvc.New(apiParty.Party("/user")).
+func registerFrontUserRoutes(apiParty router.Party, frontConf frontConfig, handles ...context.Handler) {
+	mvc.New(apiParty.Party("/user", handles...)).
 		Register(frontConf.GetAPIJwtMiddleware()).
 		Register(frontConf.GetUserService()).
 		Register(frontConf.GetUserSessionService()).
