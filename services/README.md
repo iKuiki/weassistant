@@ -1,0 +1,3 @@
+# services
+
+services包中定义了weassistant中用到的外部服务的抽象

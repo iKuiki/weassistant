@@ -1,0 +1,6 @@
+# devcontainer
+
+项目提供vscode的基于容器的开发，使用vscode作为ide并安装了vscode remote development插件，再安装好docker引擎后，即可无须安装其余环境，直接通过容器作为开发环境来开发、编译、运行项目。
+
+devcontainer.json文件定义了开发容器的基本信息，包括应该装哪些vscode插件，vscode的容器相关的配置等
+Dockerfile文件定义了开发容器的构建过程

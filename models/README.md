@@ -1,0 +1,3 @@
+# models
+
+models包定义了weassistant中用到的数据模型

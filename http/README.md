@@ -1,0 +1,3 @@
+# http
+
+http包提供基于http的api访问以管理weassistant
