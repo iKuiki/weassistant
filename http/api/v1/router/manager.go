@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/iris/core/router"
 	"weassistant/http/api/v1/manager"
 	api1ManagerMiddleware "weassistant/http/api/v1/manager/middleware"
+	"weassistant/services/locker"
 	"weassistant/services/orm"
 
 	"github.com/kataras/iris/mvc"
@@ -17,6 +18,7 @@ type managerModuleConf interface {
 	GetAdministratorSessionService() orm.AdministratorSessionService
 	GetUserService() orm.UserService
 	GetJwtValidationKey() string
+	GetRegisterLockerService() locker.CommonLockerService
 }
 
 // 后台管理模块路由总成
@@ -55,5 +57,6 @@ func registerManagerMyRoutes(managerAPI router.Party, managerConf managerModuleC
 func registerManagerUserRoutes(managerAPI router.Party, managerConf managerModuleConf, handles ...context.Handler) { // 允许cors跨域访问
 	mvc.New(managerAPI.Party("/user", handles...)).
 		Register(managerConf.GetUserService()).
+		Register(managerConf.GetRegisterLockerService()).
 		Handle(new(manager.UserAPI))
 }
