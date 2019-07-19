@@ -36,4 +36,16 @@ func TestUserManager(t *testing.T) {
 			Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).Contains(`"pageinfo"`).Contains(`"total":`)
 	}
+	account := "testR&L_" + RandStringBytes(10)
+	password := "123321"
+	{
+		// 尝试注册用户
+		e.POST("/api/v1/manager/user").WithHeader("Authorization", "bearermgr "+jwtToken).
+			WithFormField("nickname", "testManagerCreate").
+			WithFormField("account", account).
+			WithFormField("password", password).Expect().Status(httptest.StatusOK).
+			Body().
+			Contains(`"msg": "create success"`).
+			Contains(`"nickname": "testManagerCreate"`)
+	}
 }
