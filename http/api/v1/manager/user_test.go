@@ -34,6 +34,6 @@ func TestUserManager(t *testing.T) {
 		// 尝试用户列表
 		e.GET("/api/v1/manager/user").WithHeader("Authorization", "bearermgr "+jwtToken).
 			Expect().Status(httptest.StatusOK).
-			Body().Contains(`"code": 0`)
+			Body().Contains(`"code": 0`).Contains(`"pageinfo"`).Contains(`"total":`)
 	}
 }

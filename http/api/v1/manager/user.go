@@ -20,5 +20,11 @@ func (api *UserAPI) Get(ctx iris.Context, userService orm.UserService) mvc.Resul
 	if err != nil {
 		return api.Error(ctx, common.RetCodeGormQueryFail, ctx.Translate("QueryUsersError"), err, "userService.GetListByWhereOptions error: "+err.Error())
 	}
-	return api.Output(users)
+	size := api.Size(ctx, userService, whereOptions)
+	return api.Output(map[string]interface{}{
+		"list": users,
+		"pageinfo": map[string]interface{}{
+			"total": size,
+		},
+	})
 }
