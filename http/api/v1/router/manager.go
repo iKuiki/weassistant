@@ -47,7 +47,6 @@ func registerManagerAuthRoutes(managerAPI router.Party, managerConf managerModul
 // registerManagerMyRoutes 注册后台我的信息服务路由
 func registerManagerMyRoutes(managerAPI router.Party, managerConf managerModuleConf, needLoginMiddleware api1ManagerMiddleware.NeedLoginMiddleware, handles ...context.Handler) {
 	mvc.New(managerAPI.Party("/my", handles...)).
-		Register(managerConf.GetMgrJwtMiddleware()).
 		Register(managerConf.GetAdministratorService()).
 		Register(managerConf.GetAdministratorSessionService()).
 		Handle(new(manager.MyAPI))
