@@ -44,9 +44,9 @@ func registerFrontAuthRoutes(apiParty router.Party, frontConf frontConfig, handl
 
 // registerFrontUserRoutes 注册前台用户服务路由
 func registerFrontUserRoutes(apiParty router.Party, frontConf frontConfig, handles ...context.Handler) {
-	mvc.New(apiParty.Party("/me", handles...)).
+	mvc.New(apiParty.Party("/my", handles...)).
 		Register(frontConf.GetAPIJwtMiddleware()).
 		Register(frontConf.GetUserService()).
 		Register(frontConf.GetUserSessionService()).
-		Handle(new(front.UserAPI))
+		Handle(new(front.MyAPI))
 }

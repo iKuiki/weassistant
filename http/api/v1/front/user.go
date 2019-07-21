@@ -8,13 +8,13 @@ import (
 	"weassistant/services/orm"
 )
 
-// UserAPI 用户控制器
-type UserAPI struct {
+// MyAPI 用户控制器
+type MyAPI struct {
 	BaseAPI
 }
 
 // Get 获取用户信息
-func (api *UserAPI) Get(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware, userService orm.UserService) mvc.Result {
+func (api *MyAPI) Get(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware, userService orm.UserService) mvc.Result {
 	userID := api.userID(ctx)
 	user, err := userService.Get(userID)
 	if err != nil {
@@ -24,7 +24,7 @@ func (api *UserAPI) Get(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware, 
 }
 
 // Delete 注销
-func (api *UserAPI) Delete(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware, sessionService orm.UserSessionService) mvc.Result {
+func (api *MyAPI) Delete(ctx iris.Context, jwtHandler *jwtmiddleware.Middleware, sessionService orm.UserSessionService) mvc.Result {
 	token := ctx.Values().GetString("user_token")
 	session, err := sessionService.GetByWhereOptions([]orm.WhereOption{
 		orm.WhereOption{Query: "token = ?", Item: []interface{}{token}},

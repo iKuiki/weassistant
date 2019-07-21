@@ -69,7 +69,7 @@ func TestRegisterAndLogin(t *testing.T) {
 	e := httptest.New(t, testApp)
 	{
 		// 尝试获取信息
-		e.GET("/api/v1/me").
+		e.GET("/api/v1/my").
 			Expect().Status(httptest.StatusUnauthorized).
 			Body().Contains(`"code": 2`).
 			Contains(`"msg": "need login"`)
@@ -99,19 +99,19 @@ func TestRegisterAndLogin(t *testing.T) {
 	}
 	{
 		// 尝试获取信息
-		e.GET("/api/v1/me").WithHeader("Authorization", "Bearer "+jwtToken).
+		e.GET("/api/v1/my").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
 			Contains(`"nickname": "testRegisterAndLogin"`)
 	}
 	{
 		// 注销
-		e.DELETE("/api/v1/me").WithHeader("Authorization", "Bearer "+jwtToken).
+		e.DELETE("/api/v1/my").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusOK)
 	}
 	{
 		// 注销后应该返回未登录
-		e.GET("/api/v1/me").WithHeader("Authorization", "Bearer "+jwtToken).
+		e.GET("/api/v1/my").WithHeader("Authorization", "Bearer "+jwtToken).
 			Expect().Status(httptest.StatusUnauthorized)
 	}
 }
