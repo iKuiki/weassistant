@@ -74,6 +74,6 @@ require (
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/appengine v1.6.0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.29.0
+	gopkg.in/go-playground/validator.v9 v9.29.1
 	gopkg.in/ini.v1 v1.42.0 // indirect
 )

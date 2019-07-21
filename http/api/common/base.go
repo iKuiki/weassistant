@@ -1,10 +1,10 @@
 package common
 
 import (
-	"weassistant/http/common"
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"weassistant/http/common"
 
 	"github.com/kataras/iris"
 	"github.com/tealeg/xlsx"
@@ -20,6 +20,7 @@ type BaseController struct {
 func (ctl *BaseController) ReadForm(ctx iris.Context, object interface{}) {
 	err := ctx.ReadForm(object)
 	if err != nil {
+		ctx.Application().Logger().Debug("readform error: ", err)
 		if err.Error() == "An empty form passed on ReadForm" {
 			panic(ctl.InvalidParam(ctx, RetCodeValidFail, ctx.Translate("EmptyForm"), nil, ""))
 		}

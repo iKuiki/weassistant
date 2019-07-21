@@ -35,7 +35,7 @@ func TestLogin(t *testing.T) {
 		e.GET("/api/v1/manager/my").WithHeader("Authorization", "bearermgr "+jwtToken).
 			Expect().Status(httptest.StatusOK).
 			Body().Contains(`"code": 0`).
-			Contains(`"name": "testLogin"`)
+			Contains(`"name": "` + admin.Name + `"`)
 	}
 	{
 		// 注销
