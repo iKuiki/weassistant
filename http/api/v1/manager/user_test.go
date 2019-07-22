@@ -39,7 +39,7 @@ func TestUserManager(t *testing.T) {
 	account := "testR&L_" + RandStringBytes(10)
 	password := "123321"
 	{
-		// 尝试注册用户
+		// 尝试创建用户
 		e.POST("/api/v1/manager/user").WithHeader("Authorization", "bearermgr "+jwtToken).
 			WithFormField("nickname", "testManagerCreate").
 			WithFormField("account", account).
@@ -47,5 +47,11 @@ func TestUserManager(t *testing.T) {
 			Body().
 			Contains(`"msg": "create success"`).
 			Contains(`"nickname": "testManagerCreate"`)
+	}
+	{
+		// 注销
+		e.DELETE("/api/v1/manager/my").WithHeader("Authorization", "bearermgr "+jwtToken).
+			Expect().Status(httptest.StatusOK).
+			Body().Contains(`"code": 0`)
 	}
 }

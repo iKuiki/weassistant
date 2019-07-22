@@ -40,7 +40,8 @@ func TestLogin(t *testing.T) {
 	{
 		// 注销
 		e.DELETE("/api/v1/manager/my").WithHeader("Authorization", "bearermgr "+jwtToken).
-			Expect().Status(httptest.StatusOK)
+			Expect().Status(httptest.StatusOK).
+			Body().Contains(`"code": 0`)
 	}
 	{
 		// 注销后应该返回未登录

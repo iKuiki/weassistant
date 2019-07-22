@@ -38,12 +38,20 @@ func (api *MyAPI) Delete(ctx iris.Context, sessionService orm.AdministratorSessi
 	return api.Success(ctx.Translate("LogoutSuccess"), nil)
 }
 
+// patchAdministrator 用于更新的admin类型
+// 因为使用iris的ReadForm时不允许表单中有struct不存在的字段
+// models.Administrator没用OldPassword字段
+// 所以通过扩展models.Administrator来添加这个字段
+type patchAdministrator struct {
+	models.Administrator
+	OldPassword string `json:"-" form:"old_password"`
+}
+
 // Patch 修改个人信息
 // 因为修改个人信息属于比较特殊的情况，所以要对修改个人信息做更多处理
-// TODO: 修复修改密码的时候需要靠account字段传旧密码的问题，可以考虑新建一个struct组合models.Administrator，扩展一个OldPassword字段
 func (api *MyAPI) Patch(ctx iris.Context, administratorService orm.AdministratorService, sessionService orm.AdministratorSessionService) mvc.Result {
 	admin := api.admin(ctx, administratorService)
-	var formAdministrator models.Administrator
+	var formAdministrator patchAdministrator
 	api.ReadForm(ctx, &formAdministrator)
 	// 由于验证规则是针对注册的规则，所以验证前需要针对注册规则适当修订
 
@@ -53,14 +61,13 @@ func (api *MyAPI) Patch(ctx iris.Context, administratorService orm.Administrator
 	passwdHasChange := false
 	{
 		// 不允许修改Account，
-		password := formAdministrator.Account
 		formAdministrator.Account = admin.Account
 		if formAdministrator.Password == "" {
 			formAdministrator.Password = "This is a tmp Passwd."
 		} else {
 			// 如果需要修改密码，则需要验证旧密码
 			{
-				err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
+				err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(formAdministrator.OldPassword))
 				if err != nil {
 					ctx.Application().Logger().Debugf("administrator %s modify password fail because old password Incorrect", admin.Account)
 					return api.InvalidParam(ctx, apiCommon.RetCodeReadFormFail, ctx.Translate("OldPasswdIncorrect"), nil, "")
