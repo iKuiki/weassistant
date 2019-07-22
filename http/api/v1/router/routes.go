@@ -14,8 +14,8 @@ func RegisterAPI1Router(app *iris.Application, extraConf conf.ExtraConfig) {
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
-		AllowedMethods:   []string{"GET", "POST", "DELETE"},
-		AllowedHeaders:   []string{"Authorization"},
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 	})
 	// v1版api
 	APIv1 := app.Party("/api/v1", crs)
