@@ -1,6 +1,7 @@
 package front
 
 import (
+	"time"
 	"weassistant/http/api/common"
 	"weassistant/http/api/v1/common/retcode"
 	"weassistant/models"
@@ -79,6 +80,13 @@ func (api *AuthAPI) PostLogin(ctx iris.Context, jwtHandler *jwtmiddleware.Middle
 			ctx.Application().Logger().Debugf("user %s login fail because password Incorrect", user.Account)
 			return api.InvalidParam(ctx, retcode.RetCodeLoginInfoIncorrect, ctx.Translate("LoginInfoIncorrect"), nil, "")
 		}
+	}
+	nowTime := time.Now()
+	user.LastLoginAt = &nowTime
+	user.LastLoginIP = ctx.RemoteAddr()
+	err = userService.Save(&user)
+	if err != nil {
+		return api.Error(ctx, common.RetCodeGormQueryFail, ctx.Translate("SaveSessionFail"), err, "")
 	}
 	ctx.Application().Logger().Debugf("user %s[%d] login correct, making session...", user.Account, user.ID)
 	session := models.UserSession{

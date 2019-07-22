@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"time"
 	"weassistant/http/api/common"
 	"weassistant/http/api/v1/common/retcode"
 	"weassistant/models"
@@ -75,6 +76,13 @@ func (api *AuthAPI) PostLogin(ctx iris.Context, jwtHandler *jwtmiddleware.Middle
 			ctx.Application().Logger().Debugf("administrator %s login fail because password Incorrect", administrator.Account)
 			return api.InvalidParam(ctx, retcode.RetCodeLoginInfoIncorrect, ctx.Translate("LoginInfoIncorrect"), nil, "")
 		}
+	}
+	nowTime := time.Now()
+	administrator.LastLoginAt = &nowTime
+	administrator.LastLoginIP = ctx.RemoteAddr()
+	err = administratorService.Save(&administrator)
+	if err != nil {
+		return api.Error(ctx, common.RetCodeGormQueryFail, ctx.Translate("SaveSessionFail"), err, "")
 	}
 	ctx.Application().Logger().Debugf("administrator %s[%d] login correct, making session...", administrator.Account, administrator.ID)
 	session := models.AdministratorSession{
