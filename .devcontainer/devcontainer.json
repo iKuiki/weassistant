@@ -16,7 +16,6 @@
 	"postCreateCommand": "go mod download",
 	"settings": {
 		"go.gopath": "/go",
-		"go.inferGopath": true,
 		"go.useLanguageServer": true
 	}
 }
